@@ -1,10 +1,9 @@
 import { Router } from 'express';
-import ProductManager from '../classes/ProductManager.js';
+import ProductManager from '../dao/ProductsManager.js';
 
 
 const router = Router();
-export const products_prueba = new ProductManager("./src/data/products.json")
-const startAsync = async () => {
+/* const startAsync = async () => {
     for (let i = 1; i <= 10; i++) {
         let code = 'abc' + '1'.repeat(i);
         let newProduct = {
@@ -20,16 +19,15 @@ const startAsync = async () => {
 
         await products_prueba.addProduct(newProduct);
     }
-}
+} */
 
 router.get("/products",async (req, res) => {
     const limit = req.query.limit;
 
     try {
-        const products = await products_prueba.getProducts();
+        const products = await ProductManager.getProducts();
         if(limit){
             products.splice(limit);
-            console.log(products);
             const productsObj = {
                 products: products
             }
@@ -50,7 +48,7 @@ router.get("/products/:pid", async (req, res) => {
     const id = req.params.pid;
 
     try {
-        const products = await products_prueba.getProductById(id)
+        const products = await ProductManager.getProductById(id);
         if(products){
             const productsObj = {
                 product: products
@@ -58,7 +56,7 @@ router.get("/products/:pid", async (req, res) => {
             res.send(productsObj);
         } else {
             const productsObj = {
-                product: "no existe el producto con esa id"
+                product: "There is no product by that id"
             }
             res.status(200).send(productsObj);
         }
@@ -74,7 +72,7 @@ router.post("/products", async (req, res) => {
         data = {
             ...data,
         };
-        let added = await products_prueba.addProduct(data);
+        let added = await ProductManager.addProduct(data);
         if(added){
             res.status(200).send(data)
         } else {
@@ -90,10 +88,10 @@ router.post("/products", async (req, res) => {
 router.put("/products/:pid", async (req, res) => {
     const id = req.params.pid;
     try {
-        const products = await products_prueba.getProductById(id)
+        const products = await ProductManager.getProductById(id)
         if(!products){
             const productsObj = {
-                product: "no existe el producto con esa id"
+                product: "There is no product by that id"
             }
             res.status(404).send(productsObj);
         } else {
@@ -101,9 +99,9 @@ router.put("/products/:pid", async (req, res) => {
             data = {
                 ...data,
             };
-            await products_prueba.updateProduct(id, data);
-            const productsNew = await products_prueba.getProductById(id)
-            res.status(200).send(productsNew);
+            await ProductManager.updateProduct(id, data);
+            const newProduct = await ProductManager.getProductById(id)
+            res.status(200).send(newProduct);
         }
     } catch (error) {
         console.error("Error fetching products:", error);
@@ -114,7 +112,7 @@ router.put("/products/:pid", async (req, res) => {
 router.delete("/products/:pid", async (req, res) => {
     const id = req.params.pid;
     try {
-        let deleted = await products_prueba.deleteProduct(id)
+        let deleted = await ProductManager.deletePoduct(id)
         res.status(200).send(`The product is deleted? : ${deleted}`);
     }
     catch (error){
@@ -123,6 +121,5 @@ router.delete("/products/:pid", async (req, res) => {
     }
 })
 
-startAsync();
 
 export default router;
