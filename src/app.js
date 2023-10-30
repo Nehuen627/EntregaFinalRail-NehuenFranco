@@ -6,7 +6,19 @@ import handlebars from 'express-handlebars';
 import { __dirname } from './utils.js';
 import UsersManager from "./dao/UsersManager.js";
 import chatRouter from "./routers/chat.router.js"
+import { socketServer } from "./server.js"
+import cors from 'cors';
+
 const app = express();
+
+// lograr funcionar server socket.io
+app.use(cors({
+    origin: "http://localhost:8080",
+    methods: ["GET", "POST"],
+    allowedHeaders: ["my-custom-header"],
+    credentials: true
+}));
+
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
@@ -54,6 +66,11 @@ app.use((error, req, res, next) => {
     console.log(errorMessage);
     res.status(500).json({status: 'error', errorMessage})
 })
+
+app.use((req, res, next) => {
+    req.socketServer = socketServer;
+    next();
+});
 
 
 app.use('/api', cartRouter, productsRouter, chatRouter);

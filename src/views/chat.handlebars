@@ -12,25 +12,37 @@
     <button id="send">Enviar</button>
 </div>
 
+
+<script src="/socket.io/socket.io.js"></script>
 <script>
-    document.getElementById('send').addEventListener('click', async () => {
-    const messageText = document.getElementById('message').value;
-    const userEmail = document.getElementById('hiddenEmail').textContent;
+    const socket = io();
 
-    const response = await fetch('/api/messages', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ user: userEmail, message: messageText })
-    });
-
-    const result = await response.json();
-    if (result && result._id) {
+    socket.on('new message', (message) => {
         const messagesDiv = document.getElementById('messages');
         const newMessageDiv = document.createElement('div');
         newMessageDiv.className = 'message';
-        newMessageDiv.innerHTML = `<strong>${userEmail}:</strong> ${messageText}`;
+        newMessageDiv.innerHTML = `<strong>${message.user}:</strong> ${message.content}`;
         messagesDiv.appendChild(newMessageDiv);
-    }
-});
+    });
+
+    document.getElementById('send').addEventListener('click', async () => {
+        const messageText = document.getElementById('message').value;
+        const userEmail = document.getElementById('hiddenEmail').textContent;
+
+        const message = {
+            user: userEmail,
+            content: messageText
+        };
+        socket.emit('new message', message);
+
+        const response = await fetch('/api/messages', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ user: userEmail, message: messageText })
+        });
+
+        const result = await response.json();
+        if (result && result._id) {}
+    });
 
 </script>
