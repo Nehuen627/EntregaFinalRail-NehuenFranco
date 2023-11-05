@@ -1,42 +1,56 @@
 import { Router } from 'express';
 import ProductManager from '../dao/ProductsManager.js';
+import productsModel from '../dao/models/products.model.js';
 
 
 const router = Router();
-/* const startAsync = async () => {
-    for (let i = 1; i <= 10; i++) {
-        let code = 'abc' + '1'.repeat(i);
-        let newProduct = {
-            title: "producto prueba",
-            description: "este es un producto prueba",
-            price: 200,
-            thumbnail: "sin imagen",
-            code: code,
-            stock: 25,
-            status: true,
-            category: "pruebas",
-        };
+router.get("/products", async (req, res) => {
+    const { limit, page, sort, status, category} = req.query;
 
-        await products_prueba.addProduct(newProduct);
-    }
-} */
-
-router.get("/products",async (req, res) => {
-    const limit = req.query.limit;
 
     try {
-        const products = await ProductManager.getProducts();
-        if(limit){
-            products.splice(limit);
-            const productsObj = {
-                products: products
-            }
-            res.send(productsObj);
+        const options = {
+            limit: limit ? parseInt(limit) : 10,
+            page: page ? parseInt(page) : 1,
+        };
+
+        const filter = {};
+
+        if (category) {
+            filter.category = category; 
+        }
+        if (status) { 
+            filter.status = status; 
+        }
+
+        if (sort === 'asc' || sort === 'desc') {
+            options.sort = { price: sort === 'asc' ? 1 : -1 };
+        }
+
+        const result = await productsModel.paginate(filter, options);
+
+        if (req.accepts('html')) {
+            res.render('products', {
+                products: result.docs,
+                totalPages: result.totalPages,
+                prevLink: result.hasPrevPage ? `/api/products?page=${result.page - 1}&limit=${options.limit}` : null,
+                nextLink: result.hasNextPage ? `/api/products?page=${result.page + 1}&limit=${options.limit}` : null,
+            });
+        } else if (req.accepts('json')) {
+            const response = {
+                status: "success",
+                payload: result.docs,
+                totalPages: result.totalPages,
+                prevPages: result.page - 1,
+                page: result.page,
+                hasPrevPage: result.hasPrevPage,
+                hasNextPage: result.hasNextPage,
+                prevLink: result.hasPrevPage ? `/products?page=${result.page - 1}&limit=${options.limit}` : null,
+                nextLink: result.hasNextPage ? `/products?page=${result.page + 1}&limit=${options.limit}` : null,
+            };
+            res.status(200).json(response);
         } else {
-            const productsObj = {
-                products: products
-            }
-            res.status(200).send(productsObj);
+            res.status(406).send("Not acceptable");
         }
     } catch (error) {
         console.error("Error fetching products:", error);
@@ -48,21 +62,23 @@ router.get("/products/:pid", async (req, res) => {
     const id = req.params.pid;
 
     try {
-        const products = await ProductManager.getProductById(id);
-        if(products){
-            const productsObj = {
-                product: products
+        let product;
+        if (req.accepts('html')) {
+            product = await productsModel.findById(id);
+            if (product) {
+                return res.render('product-detail', { product });
             }
-            res.send(productsObj);
+        }
+
+        product = await ProductManager.getProductById(id);
+        if (product) {
+            res.json({ product });
         } else {
-            const productsObj = {
-                product: "There is no product by that id"
-            }
-            res.status(200).send(productsObj);
+            res.status(404).json({ message: "Product not found" });
         }
     } catch (error) {
-        console.error("Error fetching products:", error);
-        res.status(500).send("Error fetching products.");
+        console.error("Error fetching product:", error);
+        res.status(500).json({ message: "Error fetching product" });
     }
 });
 

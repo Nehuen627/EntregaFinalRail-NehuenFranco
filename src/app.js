@@ -2,7 +2,7 @@ import express from "express"
 import path from "path"
 import cartRouter from "./routers/cart.router.js"
 import productsRouter from "./routers/products.router.js"
-import handlebars from 'express-handlebars';
+import exphbs from 'express-handlebars';
 import { __dirname } from './utils.js';
 import UsersManager from "./dao/UsersManager.js";
 import chatRouter from "./routers/chat.router.js"
@@ -24,9 +24,18 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(express.static(path.join(__dirname, '../public')));
 
-app.engine('handlebars', handlebars.engine());
+
+const hbs = exphbs.create({
+    runtimeOptions: {
+        allowProtoPropertiesByDefault: true,
+    },
+});
+
+app.engine('handlebars', hbs.engine);
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'handlebars');
+
+
 
 app.get('/', (req , res)=>{
     res.render('login');

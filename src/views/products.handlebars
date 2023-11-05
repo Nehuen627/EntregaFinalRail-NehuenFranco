@@ -1,0 +1,23 @@
+<h2>Lista de Productos</h2>
+<ul>
+    {{#each products}}
+        <li>
+            <a href="/api/products/{{_id}}"><h4>{{title}}</h4></a>
+            <form action="/api/carts/653d93937f9bb56f041835cc/product/{{_id}}" method="POST">
+                <button type="submit">Add to cart</button>
+            </form>
+        </li>
+    {{/each}}
+</ul>
+{{#if totalPages}}
+    <div class="pagination">
+        {{#if prevLink}}
+            <a href="{{prevLink}}">Previous</a>
+        {{/if}}
+
+        {{#if nextLink}}
+            <a href="{{nextLink}}">Next</a>
+        {{/if}}
+    </div>
+{{/if}}
+
