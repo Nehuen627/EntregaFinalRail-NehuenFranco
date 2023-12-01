@@ -165,4 +165,23 @@ router.delete("/carts/:cid", async (req, res) => {
     }
 })
 
+router.get("/carts", async (req, res) => {
+    try {
+        const carts = await CartManager.getCarts();
+        for (let i = 0; i < carts.length; i++) {
+            const element = carts[i];
+            element.title = i;
+        }
+        if (carts) {
+            res.render('cartsList', { carts });
+        } else {
+            res.status(400).send({ message: "No carts found" })
+        }
+    }
+    catch (error) {
+        console.error("Error getting carts:", error);
+        res.status(500).send("Error getting carts");
+    }
+})
+
 export default router;

@@ -2,20 +2,13 @@ import cartsModel from './models/carts.model.js';
 import { Exception } from '../utils.js';
 
 export default class {
-    static async addCart(products){
-
-        if (!Array.isArray(products.products) || products.products.length === 0) {
-            console.error("There is no product to create the cart");
-            return false;
-        }        
-        
-        const newCart = await cartsModel.create({ products: products.products });
+    static async addCart(userEmail){ 
+        const newCart = await cartsModel.create({ userEmail: userEmail, products: [] });
         return newCart;
-
     }
+
     static async getCartContentById(cid) {
         const cart = await isCart(cid);
-    
         return cart;
     }
     
@@ -114,6 +107,17 @@ export default class {
                 throw new Exception("Error deleting products from the cart", 500);
             }
         }
+    }
+    static async getCarts() {
+        try {
+            const carts = await cartsModel.find();
+            return carts;
+        }
+        catch (error) {
+            console.error("Error getting carts:", error);
+            throw new Exception("Error getting carts", 500);
+        }
+
     }
 }
 

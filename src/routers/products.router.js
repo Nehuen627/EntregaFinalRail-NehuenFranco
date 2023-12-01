@@ -30,11 +30,13 @@ router.get("/products", async (req, res) => {
         const result = await productsModel.paginate(filter, options);
 
         if (req.accepts('html')) {
+            const currentUser = req.user
             res.render('products', {
                 products: result.docs,
                 totalPages: result.totalPages,
                 prevLink: result.hasPrevPage ? `/api/products?page=${result.page - 1}&limit=${options.limit}` : null,
                 nextLink: result.hasNextPage ? `/api/products?page=${result.page + 1}&limit=${options.limit}` : null,
+                user: currentUser
             });
         } else if (req.accepts('json')) {
             const response = {
@@ -60,13 +62,13 @@ router.get("/products", async (req, res) => {
 
 router.get("/products/:pid", async (req, res) => {
     const id = req.params.pid;
-
+    const currentUser = req.user
     try {
-        let product;
+        let product;  
         if (req.accepts('html')) {
             product = await productsModel.findById(id);
             if (product) {
-                return res.render('product-detail', { product });
+                return res.render('product-detail', { product, user:currentUser });
             }
         }
 
