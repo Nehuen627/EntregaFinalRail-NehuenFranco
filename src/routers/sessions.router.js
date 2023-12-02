@@ -16,8 +16,9 @@ router.post('/sessions/login', passport.authenticate('login', { failureRedirect:
     .status(200)
     .redirect('/api/products');
 });
-router.post('/sessions/current', passport.authenticate('current', { failureRedirect: '/login' }), async (req, res) => {
-    res.redirect('/api/products');
+router.get('/sessions/current', passport.authenticate('current', { failureRedirect: '/login' }), async (req, res) => {
+    const currentUser = req.user;
+    res.json({ user: currentUser });
 });
 
 router.post('/sessions/login-github', passport.authenticate('current', { session: false }), async (req, res) => {
