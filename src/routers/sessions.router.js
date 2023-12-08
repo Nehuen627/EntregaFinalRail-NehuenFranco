@@ -1,6 +1,6 @@
 import { Router } from 'express';
 import passport from 'passport';
-import UsersManager from '../dao/UsersManager.js';
+import usersController from '../controller/users.controller.js';
 import { tokenGenerator} from '../utils.js';
 
 const router = Router();
@@ -26,7 +26,7 @@ router.post('/sessions/login-github', passport.authenticate('current', { session
         const { body:{ email } } = req;
         let user = req.user
         if (user.email === undefined) {
-            const newUser = await UsersManager.updateData("email", email, req.user._id);
+            const newUser = await usersController.updateData("email", email, req.user._id);
             const token = tokenGenerator(newUser)
             res
             .cookie('access_token', token, { maxAge: 1000*60*30, httpOnly: true, signed: true })
@@ -66,9 +66,9 @@ router.get('/sessions/logout', (req, res) => {
 router.post('/sessions/changePassword', async (req, res) => {
     try {
         const { body:{ email, password } } = req;
-        const exist = await UsersManager.findEmail(email);
+        const exist = await usersController.findEmail(email);
         if (exist){
-            await UsersManager.updateData("password", password, exist._id);
+            await usersController.updateData("password", password, exist._id);
             res.redirect('/login')
         } else {
             res.redirect('/changePassword');

@@ -1,5 +1,5 @@
-import cartsModel from './models/carts.model.js';
-import { Exception } from '../utils.js';
+import cartsModel from '../models/carts.model.js';
+import { Exception } from '../../utils.js';
 
 export default class {
     static async addCart(userEmail){ 

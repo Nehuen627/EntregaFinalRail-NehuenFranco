@@ -1,6 +1,6 @@
 import { Router } from 'express';
-import CartManager from '../dao/CartManager.js';
-import productsManager from '../dao/ProductsManager.js'
+import cartsController from '../controller/carts.controller.js';
+import productsController from '../controller/products.controller.js'
 import cartsModel from '../dao/models/carts.model.js';
 
 
@@ -9,7 +9,7 @@ const router = Router();
 router.post("/carts", async (req, res) => {
     try {
         let { body: data } = req;
-        const cart = await CartManager.addCart(data);
+        const cart = await cartsController.addCart(data);
 
         if (cart) {
             res.status(201).send({
@@ -29,38 +29,26 @@ router.get("/carts/:cid", async (req, res) => {
     const id = req.params.cid;
 
     try {
-        const cart = await CartManager.getCartContentById(id);
+        const cart = await cartsController.getCartContentById(id);
         if (cart) {
             const cartData = await cartsModel.findOne({ _id: id });
-            
-            if (req.headers.accept && req.headers.accept.includes("application/json")) {
-                res.status(200).json(cartData);
-            } else {
-                res.render('cart', { cart: cartData });
-            }
+            res.render('cart', { cart: cartData });
         } else {
-            if (req.headers.accept && req.headers.accept.includes("application/json")) {
-                res.status(404).json({ message: "There is no cart by that id" });
-            } else {
-                res.status(404).send({ message: "There is no cart by that id" });
-            }
+            res.status(404).send({ message: "There is no cart by that id" });
         }
     } catch (error) {
         console.error("Error finding cart:", error);
-        if (req.headers.accept && req.headers.accept.includes("application/json")) {
-            res.status(500).json({ message: "Error finding cart" });
-        } else {
-            res.status(500).send("Error finding cart.");
-        }
+        res.status(500).send("Error finding cart.");
     }
 })
+
 
 router.post("/carts/:cid/product/:pid", async (req, res) => {
     const idCart = req.params.cid;
     const idProduct = req.params.pid;
 
     try {
-        const product = await productsManager.getProductById(idProduct);
+        const product = await productsController.getProductById(idProduct);
 
         if (product) {
             const productsObj = {
@@ -68,7 +56,7 @@ router.post("/carts/:cid/product/:pid", async (req, res) => {
                 quantity: 1
             };
 
-            const updatedCart = await CartManager.addProductToCart(idCart, productsObj);
+            const updatedCart = await cartsController.addProductToCart(idCart, productsObj);
 
             if (updatedCart) {
                 res.redirect(`/api/carts/${idCart}`);
@@ -90,7 +78,7 @@ router.delete("/carts/:cid/product/:pid", async (req, res) => {
     const idProduct = req.params.pid;
     
     try {
-        const cart = await CartManager.getCartContentById(idCart);
+        const cart = await cartsController.getCartContentById(idCart);
         
         if (!cart) {
             return res.status(404).send({ message: "Cart not found" });
@@ -117,7 +105,7 @@ router.put("/carts/:cid", async (req, res) => {
     const products = req.body;
 
     try {
-        const updatedCart = await CartManager.updateProductsArrayOfCart(idCart, products);
+        const updatedCart = await cartsController.updateProductsArrayOfCart(idCart, products);
 
         if (updatedCart) {
             res.status(200).send({ message: "Products in the cart updated", cart: updatedCart });
@@ -136,7 +124,7 @@ router.put("/carts/:cid/product/:pid", async (req, res) => {
     const { quantity } = req.body; 
 
     try {
-        const updatedCart = await CartManager.updateProductQuantityToCart(idCart, idProduct, quantity);
+        const updatedCart = await cartsController.updateProductQuantityToCart(idCart, idProduct, quantity);
 
         if (updatedCart) {
             res.status(200).send({ message: "Product quantity in the cart updated", cart: updatedCart });
@@ -152,7 +140,7 @@ router.put("/carts/:cid/product/:pid", async (req, res) => {
 router.delete("/carts/:cid", async (req, res) => {
     const idCart = req.params.cid;
     try {
-        const updatedCart = await CartManager.deleteProductsOfCart(idCart);
+        const updatedCart = await cartsController.deleteProductsOfCart(idCart);
 
         if (updatedCart) {
             res.status(200).send({ message: "All products deleted from the cart", cart: updatedCart });
@@ -164,10 +152,9 @@ router.delete("/carts/:cid", async (req, res) => {
         res.status(500).send("Error updating the cart or deleting the products");
     }
 })
-
 router.get("/carts", async (req, res) => {
     try {
-        const carts = await CartManager.getCarts();
+        const carts = await cartsController.getCarts();
         for (let i = 0; i < carts.length; i++) {
             const element = carts[i];
             element.title = i;

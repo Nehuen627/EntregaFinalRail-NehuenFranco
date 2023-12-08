@@ -2,10 +2,10 @@ import passport from 'passport';
 import { Strategy as LocalStrategy } from 'passport-local';
 import { Strategy as GithubStrategy } from 'passport-github2';
 import { Strategy as JwtStrategy, ExtractJwt } from 'passport-jwt';
-import UsersManager from '../dao/UsersManager.js';
 import { Exception } from '../utils.js';
 import userModel from "../dao/models/user.model.js";
 import config from './envConfig.js'
+import usersController from '../controller/users.controller.js';
 
 const optsUser = {
     usernameField: 'email',
@@ -29,12 +29,12 @@ const optsJWT = {
 export const init = () => {
     passport.use('register', new LocalStrategy(optsUser, async (req, email, password, done) => {
         try {
-            const isEmailUsed = await UsersManager.findEmail(email)
+            const isEmailUsed = await usersController.findEmail(email)
             if(isEmailUsed){
                 return done(null, false, { message: "There is a user already created with that email" });
             } else {
                 const data = req.body 
-                const newUser = await UsersManager.addUser(data)
+                const newUser = await usersController.addUser(data)
                 done(null, newUser);
             }
         }
@@ -57,7 +57,7 @@ export const init = () => {
                 }
                 done(null, user);
             } else {
-                const user = await UsersManager.getUserData(email, password);
+                const user = await usersController.getUserData(email, password);
                 if(user === "Email or password invalid") {
                     return done(new Exception("Email or password invalid", 401))
                 } else {
@@ -80,7 +80,7 @@ export const init = () => {
             const githubId = profile.id;
 
             if (!email) {
-                const userWithGithubId = await UsersManager.findUserByGithubId(githubId);
+                const userWithGithubId = await usersController.findUserByGithubId(githubId);
 
                 if (userWithGithubId) {
                     return done(null, userWithGithubId);
@@ -97,11 +97,11 @@ export const init = () => {
                     cart: ''
                 };
     
-                const newUser = await UsersManager.addGithubUser(data);
+                const newUser = await usersController.addGithubUser(data);
                 return done(null, newUser);
             }
     
-            let user = await UsersManager.findEmail(email);
+            let user = await usersController.findEmail(email);
             if (user) {
                 return done(null, user);
             }
@@ -114,7 +114,7 @@ export const init = () => {
                 provider: 'Github',
             };
     
-            const newUser = await UsersManager.addGithubUser(data);
+            const newUser = await usersController.addGithubUser(data);
             done(null, newUser);
         } catch (error) {
             done(error, null);

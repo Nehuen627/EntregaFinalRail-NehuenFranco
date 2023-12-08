@@ -1,5 +1,5 @@
-import productsModel from './models/products.model.js'
-import { Exception } from '../utils.js';
+import productsModel from '../models/products.model.js'
+import { Exception } from '../../utils.js';
 
 export default class {
     static async addProduct(data){
