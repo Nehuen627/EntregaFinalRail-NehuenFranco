@@ -1,30 +1,90 @@
 import usersService from "../service/users.service.js";
-
+import { Exception } from '../utils.js';
+import bcrypt from 'bcrypt';
+import cartsController from '../controller/carts.controller.js';
 export default class {
     static async addUser(data) {
-        const newUser = usersService.addUser(data)
-        return newUser
+        const saltRounds = 10;
+        data.password = await bcrypt.hash(data.password, saltRounds);
+        const userCart = await cartsController.addCart(data.email)
+        const finalData = {
+            ...data,
+            cart: userCart._id
+        }
+        await usersService.create(finalData);
+        return await usersService.findOneDataEmail(finalData);
     }
     static async addGithubUser(data) {
-        const newUser = usersService.addGithubUser(data)
-        return newUser
+        const finalData = {
+            ...data,
+            cart: undefined
+        }
+        await usersService.create(finalData);
+        return await usersService.findOneGithubId(data);
     }
 
     static async getUserData(email, password) {
-        const user = usersService.getUserData(email, password)
-        return user
+        const user = await this.findEmail(email)
+        if (!user) {
+            return "Email or password invalid";
+        }
+
+        const passwordMatch = await bcrypt.compare(password, user.password);
+        if (passwordMatch) {
+            return user;
+        } else {
+            return "Email or password invalid";
+        }
     }
     static async findEmail(email){
-        const user = usersService.findEmail(email)
-        return user
+        const user = await usersService.findOneByEmail(email);
+        if (!user) {
+            return null;
+        } else {
+            return user;
+        }
     }
     static async updateData(dataToUpdate, data, uid) {
-        const user = usersService.updateData(dataToUpdate, data, uid)
-        return user
+        try {
+            let user = await usersService.findById(uid);
+    
+            if (dataToUpdate === "email") {    
+                let email = data
+                const existingUser = await usersService.findOneByEmail(email);
+    
+                if (existingUser && existingUser._id.toString() !== uid) {
+                    throw new Exception("The email cannot be used");
+                }
+                
+                user.email = data;
+                if(user.cart === undefined){
+                    const userCart = await cartsController.addCart(data)
+                    user.cart = userCart
+                }
+                await user.save();
+                const newUser = await usersService.findOneByEmail(email)    
+                return newUser;
+            } else if (dataToUpdate === "password") {
+                const saltRounds = 10;
+                data = await bcrypt.hash(data, saltRounds);
+                user.password = data;
+                await user.save();
+                const newUser = await usersService.findOneDataEmail(user)    
+                return newUser;
+            }
+        } catch (error) {
+            console.error("Error updating data:", error);
+            throw error; 
+        }
     }
     
     static async findUserByGithubId (gitId) {
-        const user = usersService.findUserByGithubId(gitId)
-        return user
+        const user = await usersService.findOneByGithubId(gitId)
+        if(!user) {
+            return null;
+        }
+        else{
+            return user;
+        }
     }
 }

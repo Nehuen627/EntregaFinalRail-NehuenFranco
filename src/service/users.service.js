@@ -1,24 +1,24 @@
 import userDao from "../dao/user.dao.js";
 
 export default class {
-    static async addUser(data) {
-        return await userDao.addUser(data)
+    static async create(data) {
+        return await userDao.create(data)
     }
-    static async addGithubUser(data) {
-        return await userDao.addGithubUser(data)
+    static async findOneDataEmail(data) {
+        return await userDao.findOneDataEmail(data)
     }
-
-    static async getUserData(email, password) {
-        return await userDao.getUserData(email, password)
+    static async findOneGithubId(data) {
+        return await userDao.findOneGithubId(data)
     }
-    static async findEmail(email){
-        return await userDao.findEmail(email)
+    static async findById(uid) {
+        return await userDao.findById(uid)
     }
-    static async updateData(dataToUpdate, data, uid) {
-        return await userDao.updateData(dataToUpdate, data, uid)
+    static async findOneByEmail(email) {
+        return await userDao.findOneByEmail(email)
     }
     
-    static async findUserByGithubId (gitId) {
-        return await userDao.findUserByGithubId(gitId)
+    static async findOneByGithubId(gitId) {
+        return await userDao.findOneByGithubId(gitId)
     }
+    
 }

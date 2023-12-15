@@ -1,19 +1,22 @@
 import productDao from "../dao/product.dao.js";
 
 export default class {
-    static async addProduct(data){
-        return productDao.addProduct(data)
+    static async findOne(data) {
+        return await productDao.findOne(data)
     }
-    static async getProducts( query = {} ){
-        return productDao.getProducts(query = {})
+    static async create(data) {
+        return await productDao.create(data)
     }
-    static async getProductById(pid){
-        return productDao.getProductById(pid)
+    static async find(criteria) {
+        return await productDao.find(criteria)
     }
-    static async updateProduct(pid, data) {
-        return productDao.updateProduct(pid, data)
+    static async findById(pid) {
+        return await productDao.findById(pid)
     }
-    static async deletePoduct(pid){
-        return productDao.deletePoduct(pid)
+    static async updateOne(criteria, operation) {
+        return await productDao.updateOne(criteria, operation)
+    }
+    static async deleteOne(product) {
+        return await productDao.deleteOne(product)
     }
 }
