@@ -1,12 +1,14 @@
 import { Router } from 'express';
 import cartRouter from "./cart.router.js"
 import productsRouter from "./products.router.js"
+import chatRouter from "./chat.router.js"
 import passport from 'passport';
 const router = Router();
 
 
 router.use('/api', passport.authenticate('current', { session: false }), cartRouter);
 router.use('/api', passport.authenticate('current', { session: false }), productsRouter);
+router.use('/api', passport.authenticate('current', { session: false }), chatRouter);
 
 router.get("/", (req, res) => {
     res.redirect('/login');

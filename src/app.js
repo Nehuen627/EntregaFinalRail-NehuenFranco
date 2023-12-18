@@ -10,6 +10,8 @@ import passport from 'passport';
 import { init as initPassportConfig } from './config/passport.config.js';
 import config from './config/envConfig.js'
 import cookieParser from 'cookie-parser';
+import { socketServer } from "./server.js"
+import cors from 'cors';
 
 const app = express();
 app.use(cookieParser(config.cookieSecret));
@@ -24,10 +26,17 @@ app.use(expressSession({
     }), 
 }));
 
+const PORT = config.port;
+app.use(cors({
+    origin: `http://localhost:${PORT}`,
+    methods: ["GET", "POST"],
+    allowedHeaders: ["my-custom-header"],
+    credentials: true
+}));
+
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(express.static(path.join(__dirname, '../public')));
-
 
 const hbs = exphbs.create({
     runtimeOptions: {
@@ -54,6 +63,11 @@ app.use((error, req, res, next) => {
     console.log(errorMessage);
     res.status(500).json({status: 'error', errorMessage})
 })
+app.use((req, res, next) => {
+    req.socketServer = socketServer;
+    next();
+});
+
 
 app.use('/', indexRouter);
 app.use('/auth', sessionsRouter);

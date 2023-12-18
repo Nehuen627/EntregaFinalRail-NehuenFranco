@@ -22,7 +22,7 @@ export default class {
             }
     
             await cart.save();
-            return true;
+            return cart;
         }
     }
     
@@ -35,7 +35,7 @@ export default class {
                 cart.products.splice(productIndex, 1);
                 
                 await cart.save();
-                return true;
+                return cart;
             } else {
                 throw new Exception("There is no product by that id", 404);
             }

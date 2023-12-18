@@ -90,3 +90,21 @@ body {
   h4:hover{
     color:rgb(149, 22, 234)
   }
+
+
+  .buttonRemove {
+    background-color: red !important;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+}
+
+.buttonRemove:hover {
+    background-color: darkred !important;
+}
+strong{
+  color: rgb(227, 112, 194) !important;
+}

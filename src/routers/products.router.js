@@ -4,8 +4,9 @@ import productsModel from '../dao/models/products.model.js';
 
 
 const router = Router();
+
 router.get("/products", async (req, res) => {
-    const { limit, page, sort, status, category } = req.query;
+    const { limit, page, sort, status, category, title } = req.query;
 
     try {
         const options = {
@@ -21,7 +22,9 @@ router.get("/products", async (req, res) => {
         if (status) {
             filter.status = status;
         }
-
+        if (title) {
+            filter.title = title;
+        }
         if (sort === 'asc' || sort === 'desc') {
             options.sort = { price: sort === 'asc' ? 1 : -1 };
         }

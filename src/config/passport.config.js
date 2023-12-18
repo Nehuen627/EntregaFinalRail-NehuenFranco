@@ -51,7 +51,7 @@ export const init = () => {
                     _id: "admin",
                     firstName: "Admin",
                     lastName: "Coder",
-                    rol: "Admin",
+                    role: "admin",
                     age: "AdminAge",
                     email: email
                 }
