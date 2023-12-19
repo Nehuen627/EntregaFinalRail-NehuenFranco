@@ -1,9 +1,9 @@
-import chatDao from "../dao/chat.dao.js";
+import { chatRepository } from "../repositories/index.js";
 export default class{
     static async create(userEmail, message) {
-        return await chatDao.create(userEmail, message);
+        return await chatRepository.create(userEmail, message);
     }
     static async find() {
-        return await chatDao.find();
+        return await chatRepository.find();
     }
 }

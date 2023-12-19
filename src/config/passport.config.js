@@ -6,6 +6,7 @@ import { Exception } from '../utils.js';
 import userModel from "../dao/models/user.model.js";
 import config from './envConfig.js'
 import usersController from '../controller/users.controller.js';
+import UserDTO from '../dao/DTOs/user.DTO.js';
 
 const optsUser = {
     usernameField: 'email',
@@ -49,6 +50,7 @@ export const init = () => {
             if(email === emailAdmin && password === passwordAdmin){
                 const user = {
                     _id: "admin",
+                    cart: 1,
                     firstName: "Admin",
                     lastName: "Coder",
                     role: "admin",
@@ -132,6 +134,7 @@ export const init = () => {
         if (id === "admin") {
             const adminUser = {
                 _id: "admin",
+                cart: 1,
                 firstName: "Admin",
                 lastName: "Coder",
                 rol: "Admin",
@@ -149,7 +152,12 @@ export const init = () => {
             done(error, null);
         }
     });
-    passport.use('current', new JwtStrategy(optsJWT, (payload, done) => {
+    passport.use('currentGeneral', new JwtStrategy(optsJWT, (payload, done) => {
+        const userDTO = new UserDTO(payload);
+        return done(null, userDTO);
+    }));
+    passport.use('currentProfile', new JwtStrategy(optsJWT, (payload, done) => {
         return done(null, payload);
     }));
+    
 }

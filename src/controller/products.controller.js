@@ -25,13 +25,23 @@ export default class {
     }
     static async updateProduct(pid, data) {
         const product = await productsService.findById(pid);
-        if(!product){
+    
+        if (!product) {
             throw new Exception("There is no product by that id", 404);
         }
+    
         const criteria = { _id: pid };
         const operation = { $set: data };
-        return await productsService.updateOne(criteria, operation);
+    
+        const updatedProduct = await productsService.updateOne(criteria, operation);
+    
+        if (data.stock === 0) {
+            await productsService.updateOne({ _id: pid }, { $set: { status: false } });
+        }
+    
+        return updatedProduct;
     }
+    
     static async deletePoduct(pid){
         const product = await productsService.findById(pid);
         if(!product){

@@ -9,7 +9,7 @@
         {{/each}}
     </ul>
 </div>
-<form action="">
+<form action="/api/carts/{{cart._id}}/purchase" method="post" enctype="application/x-www-form-urlencoded">
     Total price: ${{cart.totalPrice}}
     <div class="control-group">
         <label for="customerName" class="control-label">Customer name: {{user.firstName}}</label>

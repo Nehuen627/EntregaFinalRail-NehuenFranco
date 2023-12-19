@@ -1,6 +1,7 @@
 import { Router } from 'express';
 import productsController from '../controller/products.controller.js'
 import productsModel from '../dao/models/products.model.js';
+import { authenticateLevel } from '../utils.js';
 
 
 const router = Router();
@@ -70,7 +71,7 @@ router.get("/products/:pid", async (req, res) => {
         res.status(500).json({ message: "Error fetching product" });
     }
 });
-router.post("/products", async (req, res) => {
+router.post("/products", authenticateLevel(2), async (req, res) => {
     try{
         let { body : data } = req;
         data = {
@@ -89,7 +90,7 @@ router.post("/products", async (req, res) => {
     }
 })
 
-router.put("/products/:pid", async (req, res) => {
+router.put("/products/:pid", authenticateLevel(2), async (req, res) => {
     const id = req.params.pid;
     try {
         const products = await productsController.getProductById(id)
@@ -113,7 +114,7 @@ router.put("/products/:pid", async (req, res) => {
     }
 })
 
-router.delete("/products/:pid", async (req, res) => {
+router.delete("/products/:pid", authenticateLevel(2), async (req, res) => {
     const id = req.params.pid;
     try {
         let deleted = await productsController.deletePoduct(id)

@@ -25,22 +25,38 @@ export default class {
             return cart;
         }
     }
-    
     static async deleteProductOfCart(cid, pid) {
-        const cart = isCart(cid);
-        if (cart) {
-            const productIndex = cart.products.findIndex(product => product.productId._id.toString() === pid);
+        try {
+            const cart = await isCart(cid);
     
-            if (productIndex !== -1) {
-                cart.products.splice(productIndex, 1);
-                
-                await cart.save();
-                return cart;
+            if (cart && cart.products) {
+                const productIndex = cart.products.findIndex(product => product.productId._id.toString() === pid.toString());
+    
+                if (productIndex !== -1) {
+                    const productToRemove = cart.products[productIndex];
+    
+                    cart.totalPrice -= productToRemove.productId.price * productToRemove.quantity;
+    
+                    cart.products.splice(productIndex, 1);
+    
+                    await cart.save();
+    
+                    return cart;
+                } else {
+                    throw new Exception("There is no product by that id in the cart", 404);
+                }
             } else {
-                throw new Exception("There is no product by that id", 404);
+                throw new Exception("Invalid cart or cart products", 500);
             }
+        } catch (error) {
+            console.error("Error deleting product from cart:", error);
+            throw new Exception("Error deleting product from cart", 500);
         }
     }
+    
+    
+    
+    
     
     static async updateProductsArrayOfCart(cid, products) {
         const cart = await isCart(cid);

@@ -1,6 +1,7 @@
 
 import { Router } from 'express';
 import messagesController from "../controller/chat.controller.js"
+import { authenticateLevel } from '../utils.js';
 
 const router = Router();
 router.get('/chat', async (req, res) => {
@@ -12,7 +13,7 @@ router.get('/chat', async (req, res) => {
 });
 
 
-router.post('/messages', async (req, res) => {
+router.post('/messages', authenticateLevel(3), async (req, res) => {
     const { user: userEmail, message } = req.body;
     if (!userEmail || !message) {
         return res.status(400).json({ error: 'Both userEmail and message are required' });

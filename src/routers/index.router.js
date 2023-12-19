@@ -6,15 +6,15 @@ import passport from 'passport';
 const router = Router();
 
 
-router.use('/api', passport.authenticate('current', { session: false }), cartRouter);
-router.use('/api', passport.authenticate('current', { session: false }), productsRouter);
-router.use('/api', passport.authenticate('current', { session: false }), chatRouter);
+router.use('/api', passport.authenticate('currentGeneral', { session: false }), cartRouter);
+router.use('/api', passport.authenticate('currentGeneral', { session: false }), productsRouter);
+router.use('/api', passport.authenticate('currentGeneral', { session: false }), chatRouter);
 
 router.get("/", (req, res) => {
     res.redirect('/login');
 })
 
-router.get('/profile', passport.authenticate('current', { session: false }), (req, res) => {
+router.get('/profile', passport.authenticate('currentProfile', { session: false }), (req, res) => {
     res.render('profile', { title: "Profile", user: req.user});
 });
 

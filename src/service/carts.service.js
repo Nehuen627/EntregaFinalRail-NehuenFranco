@@ -1,15 +1,15 @@
-import cartDao from "../dao/cart.dao.js";
+import { cartRepository } from "../repositories/index.js"
 export default class {
     static async create(userEmail) {
-        return await cartDao.create(userEmail)
+        return await cartRepository.create(userEmail)
     }
     static async findById(cid) {
-        return await cartDao.findById(cid)
+        return await cartRepository.findById(cid)
     }
     static async findOneAndUpdate(criteria) {
-        return await cartDao.findOneAndUpdate(criteria)
+        return await cartRepository.findOneAndUpdate(criteria)
     }
     static async find() {
-        return await cartDao.find()
+        return await cartRepository.find()
     }
 }
