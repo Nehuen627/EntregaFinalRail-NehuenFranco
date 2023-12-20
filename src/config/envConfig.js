@@ -16,5 +16,9 @@ export default {
     github: {
         clientID: process.env.CLIENT_ID,
         clientSecret: process.env.CLIENT_SECRET,
+    },
+    nodemailer: {
+        pass: process.env.EMAIL_PASS,
+        email: process.env.EMAIL
     }
 }

@@ -12,6 +12,7 @@ import config from './config/envConfig.js'
 import cookieParser from 'cookie-parser';
 import { socketServer } from "./server.js"
 import cors from 'cors';
+import nodemailer from 'nodemailer'
 
 const app = express();
 app.use(cookieParser(config.cookieSecret));
@@ -56,6 +57,18 @@ app.set('view engine', 'handlebars');
 initPassportConfig();
 app.use(passport.initialize());
 app.use(passport.session());
+
+
+export const transporter = nodemailer.createTransport({
+    service: 'gmail',
+    auth: {
+        user: config.nodemailer.email,
+        pass: config.nodemailer.pass
+    },
+    tls: {
+        rejectUnauthorized: false 
+    }
+});
 
 
 app.use((error, req, res, next) => {

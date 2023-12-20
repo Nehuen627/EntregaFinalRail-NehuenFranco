@@ -2,14 +2,20 @@ import ticketService from "../service/ticket.service.js";
 import { nanoid } from "nanoid";
 import cartsController from "./carts.controller.js";
 import productsController from "./products.controller.js";
+import { transporter } from "../app.js";
+import config from "../config/envConfig.js";
+import { Exception } from "../utils.js";
+
 export default class {
     static async createTicket(cid, userEmail) {
-        const cartData = await cartsController.getCartContentById(cid);
-        const purchasedProductsData = [];
-        let amount = 0;
-    
-        for (const product of cartData.products) {
-            const productId = product.productId._id;
+        try {
+
+            const cartData = await cartsController.getCartContentById(cid);
+            const purchasedProductsData = [];
+            let amount = 0;
+            
+            for (const product of cartData.products) {
+                const productId = product.productId._id;
             const quantity = product.quantity;
     
             const existingProduct = await productsController.getProductById(productId);
@@ -20,15 +26,15 @@ export default class {
                 await productsController.updateProduct(productId, {
                     stock: updatedStock,
                 });
-    
+                
                 let productData = {
                     productId,
                     quantity,
                 };
-    
+                
                 amount += existingProduct.price * quantity;
                 purchasedProductsData.push(productData);
-    
+                
                 await cartsController.deleteProductOfCart(cid, productId);
             } else {
                 if (existingProduct.status === false) {
@@ -38,10 +44,46 @@ export default class {
                 }
             }
         }
-    
+        
         const uniqueCode = nanoid();
         const date = new Date();
-        return await ticketService.createTicket(uniqueCode, date, amount, userEmail, purchasedProductsData);
+        const ticket = await ticketService.createTicket(uniqueCode, date, amount, userEmail, purchasedProductsData);
+        
+        if(ticket){
+            const mailOptions = {
+                from: config.nodemailer.email,
+                to: userEmail,
+                subject: 'Your purchase ticket',
+                text: `Hi from the apples shop!
+                
+                Thank you for purchasing on our online service. Here are the details of your most recent purchase:
+                
+                Ticket Code: ${ticket.code}
+                Purchase Date: ${new Date(ticket.purchase_datetime).toLocaleString()}
+                Amount: $${ticket.amount.toFixed(2)}
+                Purchaser: ${ticket.purchaser}
+                
+                Products:
+                ${ticket.products.map(product => `
+                    Product ID: ${product.productId}
+                    Quantity: ${product.quantity}
+                    Product ID in Cart: ${product._id}
+                `).join('\n')}
+                
+                See you next time!
+                `
+            };
+            const info = await transporter.sendMail(mailOptions);
+
+            console.log('Correo enviado: ' + info.response);
+            return ticket;
+        } else {
+            return
+        }
     }
-    
+    catch (error) {
+        console.error("Error creating ticket and sending email:", error);
+        throw new Exception("An error occured creating ticket and sending email", 500)
+    }
+}
 }
