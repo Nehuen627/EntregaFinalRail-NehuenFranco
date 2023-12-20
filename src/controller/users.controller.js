@@ -87,4 +87,7 @@ export default class {
             return user;
         }
     }
+    static async findById(id){
+        return await usersService.findById(id)
+    }
 }

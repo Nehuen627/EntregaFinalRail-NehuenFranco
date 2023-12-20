@@ -8,13 +8,8 @@
             </div>
         {{/each}}
     </div>
-    {{#if (eq user.role 'user')}}
-        <textarea id="message" placeholder="Write your message..."></textarea>
-        <button id="send" class="button">Send</button>
-    {{/if}}
-    {{#if (eq user.role 'admin')}}
-        <h3>! Admins can not send chat messages </h3>
-    {{/if}}
+    <textarea id="message" placeholder="Write your message..."></textarea>
+    <button id="send" class="button">Send</button>
 </div>
 
 

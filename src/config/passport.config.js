@@ -3,7 +3,6 @@ import { Strategy as LocalStrategy } from 'passport-local';
 import { Strategy as GithubStrategy } from 'passport-github2';
 import { Strategy as JwtStrategy, ExtractJwt } from 'passport-jwt';
 import { Exception } from '../utils.js';
-import userModel from "../dao/models/user.model.js";
 import config from './envConfig.js'
 import usersController from '../controller/users.controller.js';
 import UserDTO from '../dao/DTOs/user.DTO.js';
@@ -145,7 +144,7 @@ export const init = () => {
         }
     
         try {
-            const user = await userModel.findById(id);
+            const user = await usersController.findById(id);
             done(null, user);
         } 
         catch (error) {
