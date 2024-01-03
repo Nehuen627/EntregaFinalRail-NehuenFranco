@@ -3,7 +3,7 @@ import expressSession from 'express-session';
 import MongoStore from 'connect-mongo';
 import path from "path"
 import exphbs from 'express-handlebars';
-import { __dirname } from './utils.js';
+import { __dirname } from './utils/utils.js';
 import indexRouter from "./routers/index.router.js"
 import sessionsRouter from "./routers/sessions.router.js"
 import passport from 'passport';
@@ -13,6 +13,7 @@ import cookieParser from 'cookie-parser';
 import { socketServer } from "./server.js"
 import cors from 'cors';
 import nodemailer from 'nodemailer'
+import errorHandler from "./middlewares/errorHandler.js";
 
 const app = express();
 app.use(cookieParser(config.cookieSecret));
@@ -37,7 +38,7 @@ app.use(cors({
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-app.use(express.static(path.join(__dirname, '../public')));
+app.use(express.static(path.join(__dirname, '../../public')));
 
 const hbs = exphbs.create({
     runtimeOptions: {
@@ -50,7 +51,7 @@ const hbs = exphbs.create({
     },
 });
 app.engine('handlebars', hbs.engine);
-app.set('views', path.join(__dirname, 'views'));
+app.set('views', path.join(__dirname, '../views'));
 app.set('view engine', 'handlebars');
 
 
@@ -71,11 +72,7 @@ export const transporter = nodemailer.createTransport({
 });
 
 
-app.use((error, req, res, next) => {
-    const errorMessage = `An error was recorded: ${error}`;
-    console.log(errorMessage);
-    res.status(500).json({status: 'error', errorMessage})
-})
+app.use(errorHandler)
 app.use((req, res, next) => {
     req.socketServer = socketServer;
     next();

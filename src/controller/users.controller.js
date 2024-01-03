@@ -1,18 +1,31 @@
 import usersService from "../service/users.service.js";
-import { Exception } from '../utils.js';
+import { Exception } from '../utils/utils.js';
 import bcrypt from 'bcrypt';
 import cartsController from '../controller/carts.controller.js';
+import { createError } from "../utils/createError.js";
+import { generatorUserError } from "../utils/errorCause.js";
+import errorList from "../utils/errorList.js";
 export default class {
     static async addUser(data) {
-        const saltRounds = 10;
-        data.password = await bcrypt.hash(data.password, saltRounds);
-        const userCart = await cartsController.addCart(data.email)
-        const finalData = {
-            ...data,
-            cart: userCart._id
+        try {
+            const saltRounds = 10;
+            data.password = await bcrypt.hash(data.password, saltRounds);
+            const userCart = await cartsController.addCart(data.email)
+            const finalData = {
+                ...data,
+                cart: userCart._id
+            }
+            await usersService.create(finalData);
+            return await usersService.findOneDataEmail(finalData);
         }
-        await usersService.create(finalData);
-        return await usersService.findOneDataEmail(finalData);
+        catch (error) {
+            createError.Error({
+                name: 'User creation error',
+                cause: generatorUserError(data),
+                message: `An error occurred while creating a user.`,
+                code: errorList.USER_CREATION_ERROR,
+            });
+        }
     }
     static async addGithubUser(data) {
         const finalData = {

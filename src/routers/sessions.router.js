@@ -1,7 +1,7 @@
 import { Router } from 'express';
 import passport from 'passport';
 import usersController from '../controller/users.controller.js';
-import { tokenGenerator} from '../utils.js';
+import { tokenGenerator} from '../utils/utils.js';
 
 const router = Router();
 

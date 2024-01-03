@@ -1,7 +1,7 @@
 import { Router } from 'express';
 import cartsController from '../controller/carts.controller.js';
 import productsController from '../controller/products.controller.js'
-import { authenticateLevel } from '../utils.js';
+import { authenticateLevel } from '../utils/utils.js';
 import ticketController from '../controller/ticket.controller.js';
 
 const router = Router();

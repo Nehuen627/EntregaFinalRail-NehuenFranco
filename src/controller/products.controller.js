@@ -1,13 +1,26 @@
-import { Exception } from '../utils.js';
+import { Exception } from '../utils/utils.js';
 import productsService from '../service/products.service.js'
+import { createError } from '../utils/createError.js';
+import { generatorProductsError } from '../utils/errorCause.js';
+import errorList from '../utils/errorList.js';
 export default class {
     static async addProduct(data){
-        const isAdded = await productsService.findOne(data);
-        if(isAdded){
-            throw new Exception("There is a product already added with the same code", 404);
+        try {
+            const isAdded = await productsService.findOne(data);
+            if(isAdded){
+                throw new Exception("There is a product already added with the same code", 404);
+            }
+            const newProduct = await productsService.create(data);
+            return newProduct
         }
-        const newProduct = await productsService.create(data);
-        return newProduct
+        catch (error) {
+            createError.Error({
+                name: 'Invalid params error',
+                cause: generatorProductsError(data),
+                message: 'An error occured within the addProduct method',
+                code: errorList.INVALID_PARAMS_ERROR,
+            });
+        }
     }
     static async getProducts( query = {} ){
         const criteria = {};

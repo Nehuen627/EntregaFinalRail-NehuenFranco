@@ -4,8 +4,8 @@ import cartsController from "./carts.controller.js";
 import productsController from "./products.controller.js";
 import { transporter } from "../app.js";
 import config from "../config/envConfig.js";
-import { Exception } from "../utils.js";
-
+import { createError } from '../utils/createError.js';
+import errorList from '../utils/errorList.js';
 export default class {
     static async createTicket(cid, userEmail) {
         try {
@@ -82,8 +82,12 @@ export default class {
         }
     }
     catch (error) {
-        console.error("Error creating ticket and sending email:", error);
-        throw new Exception("An error occured creating ticket and sending email", 500)
+        createError.Error({
+            name: 'Creating ticket error',
+            cause: error ,
+            message: 'An error occured within the creating ticket method',
+            code: errorList.INTERNAL_SERVER_ERROR,
+        });
     }
 }
 }

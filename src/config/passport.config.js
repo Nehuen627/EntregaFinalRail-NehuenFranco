@@ -2,11 +2,13 @@ import passport from 'passport';
 import { Strategy as LocalStrategy } from 'passport-local';
 import { Strategy as GithubStrategy } from 'passport-github2';
 import { Strategy as JwtStrategy, ExtractJwt } from 'passport-jwt';
-import { Exception } from '../utils.js';
+import { Exception } from '../utils/utils.js';
 import config from './envConfig.js'
 import usersController from '../controller/users.controller.js';
 import UserDTO from '../dao/DTOs/user.DTO.js';
-
+import {createError} from '../utils/createError.js';
+import errorList from '../utils/errorList.js';
+import { generatorUserLoginError } from '../utils/errorCause.js';
 const optsUser = {
     usernameField: 'email',
     passReqToCallback: true,
@@ -39,7 +41,14 @@ export const init = () => {
             }
         }
         catch(error) {
-            return done(error, false, { message: `Error: ${error.message}` });
+            return done(
+                createError.Error({
+                    name: 'Register error',
+                    cause: error,
+                    message: 'An error occured within the register method',
+                    code: errorList.INTERNAL_SERVER_ERROR,
+                })
+            );
         }
     }));
     passport.use('login', new LocalStrategy(optsUser, async (req, email, password, done) => {
@@ -60,7 +69,12 @@ export const init = () => {
             } else {
                 const user = await usersController.getUserData(email, password);
                 if(user === "Email or password invalid") {
-                    return done(new Exception("Email or password invalid", 401))
+                    return done(createError.Error({
+                        name: 'Login error',
+                        cause: generatorUserLoginError(email, password),
+                        message: 'Email or password invalid',
+                        code: errorList.AUTHENTICATION_ERROR,
+                    }))
                 } else {
                     done(null, user);
                 }

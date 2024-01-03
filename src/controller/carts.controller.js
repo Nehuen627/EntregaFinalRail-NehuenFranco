@@ -1,5 +1,8 @@
 import cartsService from "../service/carts.service.js";
-import { Exception } from "../utils.js";
+import { Exception } from "../utils/utils.js";
+import { createError } from '../utils/createError.js';
+import errorList from '../utils/errorList.js';
+import { generatorCartIdError } from "../utils/errorCause.js";
 export default class {
     static async addCart(userEmail){ 
         return await cartsService.create(userEmail)
@@ -10,19 +13,29 @@ export default class {
     }
     
     static async addProductToCart(cid, product) {
-        const cart = await isCart(cid);
-        if (cart) {
-            const existingProductIndex = cart.products.findIndex(p => p.productId._id.toString() === product.productId.toString());
+        try {
+            const cart = await isCart(cid);
+            if (cart) {
+                const existingProductIndex = cart.products.findIndex(p => p.productId._id.toString() === product.productId.toString());
 
-    
-            if (existingProductIndex !== -1) {
-                cart.products[existingProductIndex].quantity++;
-            } else {
-                cart.products.push(product);
+        
+                if (existingProductIndex !== -1) {
+                    cart.products[existingProductIndex].quantity++;
+                } else {
+                    cart.products.push(product);
+                }
+        
+                await cart.save();
+                return cart;
             }
-    
-            await cart.save();
-            return cart;
+        }
+        catch (error) {
+            createError.Error({
+                name: 'AddingProductToCart error',
+                cause: error,
+                message: 'An error occured within the addProductToCart method',
+                code: errorList.INTERNAL_SERVER_ERROR,
+            });
         }
     }
     static async deleteProductOfCart(cid, pid) {
@@ -138,7 +151,12 @@ export default class {
 async function isCart(cid) {
     const cart = await cartsService.findById(cid);
         if(!cart){
-            throw new Exception("There is no cart by that id", 404);
+            createError.Error({
+                name: 'Invalid param error',
+                cause: generatorCartIdError(cid),
+                message: 'There is no cart by that id',
+                code: errorList.INVALID_PARAMS_ERROR,
+            });
         }
     return cart
 }

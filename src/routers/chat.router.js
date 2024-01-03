@@ -1,7 +1,7 @@
 
 import { Router } from 'express';
 import messagesController from "../controller/chat.controller.js"
-import { authenticateLevel } from '../utils.js';
+import { authenticateLevel } from '../utils/utils.js';
 
 const router = Router();
 router.get('/chat', authenticateLevel(3), async (req, res) => {

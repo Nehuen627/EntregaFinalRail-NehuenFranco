@@ -1,7 +1,7 @@
 import { Router } from 'express';
 import productsController from '../controller/products.controller.js'
 import productsModel from '../dao/models/products.model.js';
-import { authenticateLevel } from '../utils.js';
+import { authenticateLevel } from '../utils/utils.js';
 
 
 const router = Router();

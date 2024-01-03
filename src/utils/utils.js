@@ -1,8 +1,10 @@
 import path from 'path';
 import { fileURLToPath } from 'url';
-import config from './config/envConfig.js';
+import config from '../config/envConfig.js';
 import JWT from 'jsonwebtoken';
-
+import { faker } from "@faker-js/faker";
+import {createError} from './createError.js';
+import errorList from './errorList.js';
 const __filename = fileURLToPath(import.meta.url);
 
 export const __dirname = path.dirname(__filename);
@@ -55,12 +57,38 @@ export function authenticateLevel(level) {
                 } else {
                     res.status(405).send({ message: 'User level required'});
                 }
-            } else {
-                res.status(500).send({ message: 'AuthenticateLevel method error'});
             }
         }
         catch (Error) {
-            throw new Exception('AuthenticationLevel failed', 401);
+            createError.Error({
+                name: 'Authentication error',
+                cause: Error,
+                message: 'An error occured within the authenticate method',
+                code: errorList.AUTHORIZATION_ERROR,
+            });
         }
     }
 }
+
+export const generateProduct = () => {
+    const thumbnailImage = getThumbnailUrl(); 
+
+    return {
+        _id: faker.database.mongodbObjectId(),
+        title: faker.commerce.productName(),
+        description: faker.lorem.paragraph(),
+        code: faker.string.alphanumeric({ length: 10 }),
+        price: faker.commerce.price(),
+        stock: faker.number.int({ min: 10000, max: 99999 }),
+        image: faker.image.url(),
+        status: faker.datatype.boolean(),
+        category: faker.commerce.productAdjective(),
+        thumbnail: thumbnailImage,
+    };
+};
+const getThumbnailUrl = () => {
+    const productImage = faker.image.url();
+    const fileExtension = productImage.split('.').pop();
+    const thumbnailUrl = productImage.replace(`.${fileExtension}`, `_thumb.${fileExtension}`);
+    return thumbnailUrl;
+};
