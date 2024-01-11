@@ -41,7 +41,7 @@ router.get("/products", async (req, res) => {
             user: currentUser
         });
     } catch (error) {
-        console.error("Error fetching products:", error);
+        req.logger.error("Error fetching products:", error)
         res.status(500).send("Error fetching products.");
     }
 });
@@ -67,7 +67,7 @@ router.get("/products/:pid", async (req, res) => {
             res.status(404).json({ message: "Product not found" });
         }
     } catch (error) {
-        console.error("Error fetching product:", error);
+        req.logger.error("Error fetching products:", error)
         res.status(500).json({ message: "Error fetching product" });
     }
 });
@@ -85,7 +85,7 @@ router.post("/products", authenticateLevel(2), async (req, res) => {
         }
     } 
     catch (error) {
-        console.error("Error adding product:", error);
+        req.logger.error("Error adding products:", error)
         res.status(500).send("Error adding product.");
     }
 })
@@ -109,7 +109,7 @@ router.put("/products/:pid", authenticateLevel(2), async (req, res) => {
             res.status(200).send(newProduct);
         }
     } catch (error) {
-        console.error("Error fetching products:", error);
+        req.logger.error("Error fetching products:", error)
         res.status(500).send("Error fetching products.");
     }
 })
@@ -126,7 +126,7 @@ router.delete("/products/:pid", authenticateLevel(2), async (req, res) => {
         res.status(200).send(`The product is deleted? : ${deleted}`);
     }
     catch (error){
-        console.error("Error deleting product:", error);
+        req.logger.error("Error deleting products:", error)
         res.status(500).send("Error deleting product");
     }
 })

@@ -11,7 +11,22 @@ router.get("/mockingproducts", authenticateLevel(2), (req, res) => {
         res.json(simulatedProducts);
     }
     catch (Error) {
-        console.log(Error);
+        req.logger.error(Error)
+    }
+})
+
+router.get("/loggerTest", authenticateLevel(2), (req, res) => {
+    try {
+        req.logger.debug("Debug Test")
+        req.logger.http("Http Test")
+        req.logger.info("Info Test")
+        req.logger.warning("Warning Test")
+        req.logger.error("Error Test")
+        req.logger.fatal("Fatal Test")
+        res.send("End of tests")
+    }
+    catch (Error) {
+        req.logger.error(Error)
     }
 })
 

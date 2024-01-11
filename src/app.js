@@ -14,6 +14,7 @@ import { socketServer } from "./server.js"
 import cors from 'cors';
 import nodemailer from 'nodemailer'
 import errorHandler from "./middlewares/errorHandler.js";
+import { addLogger } from "./config/logger.js";
 
 const app = express();
 app.use(cookieParser(config.cookieSecret));
@@ -36,6 +37,7 @@ app.use(cors({
     credentials: true
 }));
 
+app.use(addLogger);
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(express.static(path.join(__dirname, '../../public')));
