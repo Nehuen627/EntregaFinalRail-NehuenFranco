@@ -60,7 +60,7 @@ router.get('/resetPassword/:uid/:token', async (req, res) => {
 
         if ((dateNow - dateOfCreation) > maxAllowedDifference) {
             req.logger.warning("Expired Link");
-            return res.status(401).json({ message: "Expired link!" });
+            res.redirect("/changePassword")
         } else {
             res.render('newPassword', { uid: uid });
         }
