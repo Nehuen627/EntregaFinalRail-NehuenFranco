@@ -15,6 +15,8 @@ import cors from 'cors';
 import nodemailer from 'nodemailer'
 import errorHandler from "./middlewares/errorHandler.js";
 import { addLogger } from "./config/logger.js";
+import swaggerJsDoc from "swagger-jsdoc";
+import swaggerUiExpress from 'swagger-ui-express'
 
 const app = express();
 app.use(cookieParser(config.cookieSecret));
@@ -41,6 +43,20 @@ app.use(addLogger);
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(express.static(path.join(__dirname, '../../public')));
+
+const options = {
+    definition: {
+        openapi: '3.0.1',
+        info: {
+            title: 'E-commerce API',
+            description: 'API for the apple shop',
+        },
+    },
+    apis: [`src/docs/**/*.yaml`],
+};
+const specs = swaggerJsDoc(options);
+app.use('/apidocs', swaggerUiExpress.serve, swaggerUiExpress.setup(specs))
+
 
 const hbs = exphbs.create({
     runtimeOptions: {
