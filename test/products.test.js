@@ -19,7 +19,7 @@ describe('Products Router', () => {
     describe('GET /products', () => {
         it('should fetch products with default pagination', async () => {
             const response = await supertest(app)
-                .get('/products')
+                .get('/api/products')
                 .expect('Content-Type', /json/)
                 .expect(200);
 
@@ -35,7 +35,7 @@ describe('Products Router', () => {
         it('should fetch a single product by id', async () => {
             const productId = 'someProductId'; 
             const response = await supertest(app)
-                .get(`/products/${productId}`)
+                .get(`/api/products/${productId}`)
                 .expect('Content-Type', /json/)
                 .expect(200);
 
@@ -55,7 +55,7 @@ describe('Products Router', () => {
             };
 
             const response = await supertest(app)
-                .post('/products')
+                .post('/api/products')
                 .send(productData)
                 .expect('Content-Type', /json/)
                 .expect(200);
@@ -73,7 +73,7 @@ describe('Products Router', () => {
             };
 
             const response = await supertest(app)
-                .put(`/products/${productId}`)
+                .put(`/api/products/${productId}`)
                 .send(updateData)
                 .expect('Content-Type', /json/)
                 .expect(200);
@@ -88,7 +88,7 @@ describe('Products Router', () => {
             const productId = 'someProductId'; 
 
             const response = await supertest(app)
-                .delete(`/products/${productId}`)
+                .delete(`/api/products/${productId}`)
                 .expect(200);
 
             expect(response.text).to.include('The product is deleted? : true');
