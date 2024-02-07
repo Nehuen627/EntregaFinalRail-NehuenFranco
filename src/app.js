@@ -19,13 +19,19 @@ import swaggerJsDoc from "swagger-jsdoc";
 import swaggerUiExpress from 'swagger-ui-express'
 
 const app = express();
+let mongo= ""
+if(config.env === "dev"){
+    mongo = config.db.URI_DEV
+} else {
+    mongo = config.db.URI;
+}
 app.use(cookieParser(config.cookieSecret));
 app.use(expressSession({
     secret: config.sessionSecret,
     resave: false,
     saveUninitialized: false,
     store: MongoStore.create({
-        mongoUrl: config.db.URI,
+        mongoUrl: mongo,
         mongoOptions: {},
         ttl: 120,
     }), 
