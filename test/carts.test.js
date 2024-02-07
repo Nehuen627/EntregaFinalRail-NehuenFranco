@@ -20,7 +20,7 @@ describe('Cart Router', function() {
             const cartId = 'someCartId';
             const productId = 'someProductId';
             const response = await supertest(app)
-                .post(`/carts/${cartId}/product/${productId}`)
+                .post(`/api/carts/${cartId}/product/${productId}`)
                 .set('Authorization', `Bearer ${authToken}`)
                 .send({ quantity: 1 })
                 .expect(200);
@@ -35,7 +35,7 @@ describe('Cart Router', function() {
             const cartId = 'someCartId';
             const productId = 'someProductId';
             const response = await supertest(app)
-                .put(`/carts/${cartId}/product/${productId}`)
+                .put(`/api/carts/${cartId}/product/${productId}`)
                 .set('Authorization', `Bearer ${authToken}`)
                 .send({ quantity: 2 })
                 .expect(200);
@@ -50,7 +50,7 @@ describe('Cart Router', function() {
             const cartId = 'someCartId';
             const productId = 'someProductId';
             const response = await supertest(app)
-                .delete(`/carts/${cartId}/product/${productId}`)
+                .delete(`/api/carts/${cartId}/product/${productId}`)
                 .set('Authorization', `Bearer ${authToken}`)
                 .expect(200);
 
@@ -63,7 +63,7 @@ describe('Cart Router', function() {
         it('should create a new cart', async () => {
             const cartData = { userId: 'someUserId' }; 
             const response = await supertest(app)
-                .post('/carts')
+                .post('/api/carts')
                 .set('Authorization', `Bearer ${authToken}`)
                 .send(cartData)
                 .expect(201);
@@ -77,7 +77,7 @@ describe('Cart Router', function() {
         it('should fetch the contents of a cart', async () => {
             const cartId = 'someCartId';
             const response = await supertest(app)
-                .get(`/carts/${cartId}`)
+                .get(`/api/carts/${cartId}`)
                 .set('Authorization', `Bearer ${authToken}`)
                 .expect(200);
 
@@ -91,7 +91,7 @@ describe('Cart Router', function() {
             const cartId = 'someCartId';
             const products = [{ productId: 'someProductId', quantity: 3 }]; 
             const response = await supertest(app)
-                .put(`/carts/${cartId}`)
+                .put(`/api/carts/${cartId}`)
                 .set('Authorization', `Bearer ${authToken}`)
                 .send(products)
                 .expect(200);
@@ -105,7 +105,7 @@ describe('Cart Router', function() {
         it('should delete a cart', async () => {
             const cartId = 'someCartId';
             const response = await supertest(app)
-                .delete(`/carts/${cartId}`)
+                .delete(`/api/carts/${cartId}`)
                 .set('Authorization', `Bearer ${authToken}`)
                 .expect(200);
 
@@ -117,7 +117,7 @@ describe('Cart Router', function() {
         it('should complete the purchase process for a cart', async () => {
             const cartId = 'someCartId';
             const response = await supertest(app)
-                .post(`/carts/${cartId}/purchase`)
+                .post(`/api/carts/${cartId}/purchase`)
                 .set('Authorization', `Bearer ${authToken}`)
                 .expect(200);
 

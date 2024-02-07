@@ -12,7 +12,7 @@ describe('Sessions Router', () => {
 
             };
             const response = await supertest(app)
-                .post('/sessions/register')
+                .post('/auth/sessions/register')
                 .send(userData)
                 .expect(302); 
 
@@ -28,7 +28,7 @@ describe('Sessions Router', () => {
                 password: 'password123',
             };
             const response = await supertest(app)
-                .post('/sessions/login')
+                .post('/auth/sessions/login')
                 .send(credentials)
                 .expect(302); 
 
@@ -40,7 +40,7 @@ describe('Sessions Router', () => {
     describe('GET /sessions/logout', () => {
         it('should logout the user and redirect to /login', async () => {
             const response = await supertest(app)
-                .get('/sessions/logout')
+                .get('/auth/sessions/logout')
                 .expect(302); 
 
             expect(response.headers.location).to.equal('/login');
@@ -53,7 +53,7 @@ describe('Sessions Router', () => {
                 email: 'test@example.com',
             };
             const response = await supertest(app)
-                .post('/sessions/changePassword')
+                .post('/auth/sessions/changePassword')
                 .send(requestData)
                 .expect(200); 
 
@@ -67,7 +67,7 @@ describe('Sessions Router', () => {
                 password: 'newUniquePassword123'
             };
             const response = await supertest(app)
-                .post('/sessions/trueChangePassword')
+                .post('/auth/sessions/trueChangePassword')
                 .send(requestData)
                 .expect(302); 
             expect(response.headers.location).to.equal('/login');
