@@ -17,7 +17,7 @@ import errorHandler from "./middlewares/errorHandler.js";
 import { addLogger } from "./config/logger.js";
 import swaggerJsDoc from "swagger-jsdoc";
 import swaggerUiExpress from 'swagger-ui-express'
-
+    
 const app = express();
 let mongo= ""
 if(config.env === "dev"){
@@ -46,8 +46,8 @@ app.use(cors({
 }));
 
 app.use(addLogger);
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
+app.use(express.json({ limit: '10mb' }));
+app.use(express.urlencoded({ limit: '10mb', extended: true }));
 app.use(express.static(path.join(__dirname, '../../public')));
 
 const options = {
@@ -103,7 +103,12 @@ app.use((req, res, next) => {
 });
 
 
+
+/* app.use((req, res, next) => {
+    console.log('Request Body:', req.body);
+    console.log('Request Headers:', req.headers);
+    next();
+}); */
 app.use('/', indexRouter);
 app.use('/auth', sessionsRouter);
-
 export default app;
