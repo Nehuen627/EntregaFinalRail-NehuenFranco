@@ -10,7 +10,7 @@ const router = Router();
 
 
 router.use('/api', passport.authenticate('currentGeneral', { session: false }), cartRouter);
-router.use('/api', passport.authenticate('currentProfile', { session: false }), productsRouter);
+router.use('/api', passport.authenticate('currentGeneral', { session: false }), productsRouter);
 router.use('/api', passport.authenticate('currentGeneral', { session: false }), chatRouter);
 router.use('/api', passport.authenticate('currentGeneral', { session: false }), userRouter)
 router.use('/mock', passport.authenticate('currentGeneral', { session: false }), mockRouter);
