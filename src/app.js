@@ -39,7 +39,7 @@ app.use(expressSession({
 
 const PORT = config.port;
 app.use(cors({
-    origin: `https://entregafinalrail-nehuenfranco-production.up.railway.app`,
+    origin: `http://localhost:${PORT}`,
     methods: ["GET", "POST"],
     allowedHeaders: ["my-custom-header"],
     credentials: true

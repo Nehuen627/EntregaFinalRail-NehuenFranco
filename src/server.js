@@ -11,7 +11,7 @@ const PORT = config.port;
 
 export const socketServer = new Server(server, {
     cors: {
-        origin: `https://entregafinalrail-nehuenfranco-production.up.railway.app`,
+        origin: `http://localhost:${PORT}`,
         methods: ["GET", "POST"]
     }
 });
@@ -33,5 +33,5 @@ socketServer.on('connection', (socket) => {
 await init();
 
 server.listen(PORT, () => {
-    console.log(`Server running into https://entregafinalrail-nehuenfranco-production.up.railway.app`);
+    console.log(`Server running into http://localhost:${PORT}`);
 });
