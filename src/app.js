@@ -17,7 +17,7 @@ import errorHandler from "./middlewares/errorHandler.js";
 import { addLogger } from "./config/logger.js";
 import swaggerJsDoc from "swagger-jsdoc";
 import swaggerUiExpress from 'swagger-ui-express'
-    
+import methodOverride from 'method-override'
 const app = express();
 let mongo= ""
 if(config.env === "dev"){
@@ -49,6 +49,7 @@ app.use(addLogger);
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ limit: '10mb', extended: true }));
 app.use(express.static(path.join(__dirname, '../../public')));
+app.use(methodOverride('_method')) 
 
 const options = {
     definition: {

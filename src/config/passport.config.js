@@ -63,7 +63,9 @@ export const init = () => {
                     lastName: "Coder",
                     role: "admin",
                     age: "AdminAge",
-                    email: email
+                    email: email,
+                    documents: "",
+                    lastConnection: ""
                 }
                 done(null, user);
             } else {
@@ -109,7 +111,9 @@ export const init = () => {
                     password: '',
                     provider: 'Github',
                     githubId: githubId, 
-                    cart: ''
+                    cart: '',
+                    document: '',
+                    lastConnection: ""
                 };
     
                 const newUser = await usersController.addGithubUser(data);
@@ -127,6 +131,8 @@ export const init = () => {
                 age: '',
                 password: '',
                 provider: 'Github',
+                document: '',
+                lastConnection: ""
             };
     
             const newUser = await usersController.addGithubUser(data);
@@ -150,9 +156,10 @@ export const init = () => {
                 cart: 1,
                 firstName: "Admin",
                 lastName: "Coder",
-                rol: "Admin",
+                role: "admin",
                 age: "AdminAge",
-                email: "adminCoder@coder.com"
+                email: "adminCoder@coder.com",
+                document: ''
             };
             return done(null, adminUser);
         }

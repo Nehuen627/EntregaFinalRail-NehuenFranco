@@ -1,4 +1,5 @@
 import mongoose from 'mongoose';
+import mongoosePaginate from 'mongoose-paginate-v2'
 
 const userSchema = new mongoose.Schema({
     firstName: {type: String, required: true},
@@ -35,5 +36,5 @@ userSchema.pre('findOne', function() {
     this.populate('cart.cartId');
 });
 
-
+userSchema.plugin(mongoosePaginate);
 export default mongoose.model('User', userSchema);
