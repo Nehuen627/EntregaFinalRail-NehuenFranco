@@ -90,7 +90,7 @@ export const init = () => {
     passport.use('github', new GithubStrategy({
         clientID: config.github.clientID, 
         clientSecret: config.github.clientSecret,
-        callbackURL: "http://localhost:8080/auth/sessions/github-callback", 
+        callbackURL: "https://entregafinalrail-nehuenfranco-production.up.railway.app/auth/sessions/github-callback", 
     }, async (accessToken, refreshToken, profile, done) => {
         try {
             const email = profile._json.email;
